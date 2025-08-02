@@ -1,4 +1,11 @@
 {% extends 'payment/base.html' %}
+{% load static %}
 
 {% block content %}
+  <div id="box">
+    <img id="success-icon" src="{% static 'images/check.png' %}">
+    <3>Thank you for contributing {{amount_contributed}}</3>
+    <hr>
+    <a class="buttom" href="{% url 'home' %}">Back</a>
+  </div>
 {% endblock %}
