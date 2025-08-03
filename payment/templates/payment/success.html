@@ -1,11 +1,211 @@
 {% extends 'payment/base.html' %}
-{% load static %}
+
+{% block title %}Thank You - Donation Successful{% endblock %}
 
 {% block content %}
-  <div id="box">
-    <img id="success-icon" src="{% static 'images/check.png' %}">
-    <3>Thank you for contributing {{amount_contributed}}</3>
-    <hr>
-    <a class="buttom" href="{% url 'home' %}">Back</a>
-  </div>
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card donation-card">
+                    <div class="card-body p-5 text-center">
+                        <div class="success-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        
+                        <h2 class="mb-3">Thank You for Your Donation!</h2>
+                        <p class="lead text-muted mb-4">
+                            Your generous contribution of <strong>${{ donation.amount }}</strong> has been received successfully.
+                        </p>
+                        
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-8">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3">
+                                            <i class="fas fa-receipt me-2"></i>
+                                            Donation Details
+                                        </h5>
+                                        <div class="row text-start">
+                                            <div class="col-sm-6">
+                                                <p><strong>Name:</strong> {{ donation.name }}</p>
+                                                <p><strong>Email:</strong> {{ donation.email }}</p>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <p><strong>Amount:</strong> ${{ donation.amount }}</p>
+                                                <p><strong>Date:</strong> {{ donation.created_at|date:"M d, Y" }}</p>
+                                            </div>
+                                        </div>
+                                        {% if donation.message %}
+                                        <div class="mt-3">
+                                            <p><strong>Your Message:</strong></p>
+                                            <p class="text-muted fst-italic">"{{ donation.message }}"</p>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-success" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-heart me-2"></i>
+                                You're Making a Difference!
+                            </h5>
+                            <p class="mb-0">
+                                Your donation will help us continue our mission and create positive change in the community. 
+                                Every contribution, no matter the size, makes a real impact.
+                            </p>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-envelope fa-2x text-primary mb-2"></i>
+                                    <h6>Email Confirmation</h6>
+                                    <small class="text-muted">Check your email for a receipt</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-share-alt fa-2x text-primary mb-2"></i>
+                                    <h6>Spread the Word</h6>
+                                    <small class="text-muted">Share with friends and family</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-calendar fa-2x text-primary mb-2"></i>
+                                    <h6>Stay Updated</h6>
+                                    <small class="text-muted">Follow our progress</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="{% url 'home' %}" class="btn btn-primary me-3">
+                                <i class="fas fa-home me-2"></i>
+                                Back to Home
+                            </a>
+                            <button class="btn btn-outline-primary" onclick="shareDonation()">
+                                <i class="fas fa-share me-2"></i>
+                                Share
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <p class="text-muted mb-2">Share your generosity:</p>
+                            <div class="d-flex justify-content-center gap-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="shareOnSocial('facebook')">
+                                    <i class="fab fa-facebook-f"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="shareOnSocial('twitter')">
+                                    <i class="fab fa-twitter"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="shareOnSocial('whatsapp')">
+                                    <i class="fab fa-whatsapp"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="copyLink()">
+                                    <i class="fas fa-link"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-5">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
+                                <h5>Track Our Progress</h5>
+                                <p class="text-muted">See how your donation and others are making an impact in real-time.</p>
+                                <button class="btn btn-outline-success btn-sm">View Impact</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-bell fa-2x text-warning mb-3"></i>
+                                <h5>Stay Connected</h5>
+                                <p class="text-muted">Get updates on our projects and see the difference your support makes.</p>
+                                <button class="btn btn-outline-warning btn-sm">Subscribe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function shareDonation() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'I just made a donation!',
+                text: 'I donated ${{ donation.amount }} to support a great cause. Join me in making a difference!',
+                url: window.location.origin
+            });
+        } else {
+            // Fallback for browsers that don't support Web Share API
+            copyLink();
+        }
+    }
+    
+    function shareOnSocial(platform) {
+        const text = 'I just donated ${{ donation.amount }} to support a great cause! Join me in making a difference!';
+        const url = window.location.origin;
+        
+        let shareUrl = '';
+        
+        switch(platform) {
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                break;
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                break;
+            case 'whatsapp':
+                shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+                break;
+        }
+        
+        if (shareUrl) {
+            window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+    }
+    
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.origin).then(function() {
+
+            const button = event.target.closest('button');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.classList.remove('btn-outline-secondary');
+            button.classList.add('btn-success');
+            
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-secondary');
+            }, 2000);
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const successIcon = document.querySelector('.success-icon');
+        successIcon.style.opacity = '0';
+        successIcon.style.transform = 'scale(0.5)';
+        
+        setTimeout(() => {
+            successIcon.style.transition = 'all 0.6s ease';
+            successIcon.style.opacity = '1';
+            successIcon.style.transform = 'scale(1)';
+        }, 300);
+    });
+</script>
 {% endblock %}

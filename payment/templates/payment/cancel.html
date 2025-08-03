@@ -1,0 +1,136 @@
+{% extends 'payment/base.html' %}
+
+{% block title %}Donation Cancelled{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card donation-card">
+                    <div class="card-body p-5 text-center">
+                        <!-- Cancel Icon -->
+                        <div class="mb-4">
+                            <i class="fas fa-times-circle fa-4x text-warning"></i>
+                        </div>
+                        
+                        <!-- Cancel Message -->
+                        <h2 class="mb-3">Donation Cancelled</h2>
+                        <p class="lead text-muted mb-4">
+                            Your donation process was cancelled. No charges were made to your account.
+                        </p>
+                        
+                        <!-- Information Card -->
+                        <div class="alert alert-info" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>
+                                What happened?
+                            </h5>
+                            <p class="mb-0">
+                                You cancelled the payment process before it was completed. 
+                                Your payment information was not processed and no charges were made.
+                            </p>
+                        </div>
+                        
+                        <!-- Try Again Section -->
+                        <div class="card bg-light mt-4">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-heart me-2 text-danger"></i>
+                                    Still want to make a difference?
+                                </h5>
+                                <p class="card-text">
+                                    Every donation, no matter the size, helps us continue our mission. 
+                                    Consider trying again when you're ready.
+                                </p>
+                                <a href="{% url 'home' %}" class="btn btn-primary">
+                                    <i class="fas fa-redo me-2"></i>
+                                    Try Again
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Alternative Actions -->
+                        <div class="row mt-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-question-circle fa-2x text-primary mb-2"></i>
+                                    <h6>Need Help?</h6>
+                                    <small class="text-muted">Contact our support team</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-book fa-2x text-primary mb-2"></i>
+                                    <h6>Learn More</h6>
+                                    <small class="text-muted">About our mission</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-share-alt fa-2x text-primary mb-2"></i>
+                                    <h6>Spread the Word</h6>
+                                    <small class="text-muted">Share with others</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="mt-4">
+                            <a href="{% url 'home' %}" class="btn btn-primary me-3">
+                                <i class="fas fa-home me-2"></i>
+                                Back to Home
+                            </a>
+                            <button class="btn btn-outline-secondary" onclick="window.history.back()">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Go Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Support Information -->
+                <div class="row mt-5">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-headset fa-2x text-info mb-3"></i>
+                                <h5>Need Support?</h5>
+                                <p class="text-muted">Our team is here to help with any questions about donations or payment issues.</p>
+                                <button class="btn btn-outline-info btn-sm">Contact Support</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shield-alt fa-2x text-success mb-3"></i>
+                                <h5>Secure Payments</h5>
+                                <p class="text-muted">All payments are processed securely through Stripe with bank-level encryption.</p>
+                                <button class="btn btn-outline-success btn-sm">Learn More</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add some animation when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const cancelIcon = document.querySelector('.fa-times-circle');
+        cancelIcon.style.opacity = '0';
+        cancelIcon.style.transform = 'scale(0.5)';
+        
+        setTimeout(() => {
+            cancelIcon.style.transition = 'all 0.6s ease';
+            cancelIcon.style.opacity = '1';
+            cancelIcon.style.transform = 'scale(1)';
+        }, 300);
+    });
+</script>
+{% endblock %} 

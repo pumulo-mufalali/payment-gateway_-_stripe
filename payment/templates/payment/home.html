@@ -1,8 +1,262 @@
 {% extends 'payment/base.html' %}
-{% load static %}
+
+{% block title %}Donate - Make a Difference{% endblock %}
 
 {% block content %}
-  
-  <h1>Say Cheese</h1>
-  
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1 class="hero-title">Make a Difference Today</h1>
+                <p class="hero-subtitle">Your donation helps us create positive change in the world. Every contribution matters.</p>
+                
+                <div class="card donation-card">
+                    <div class="card-body p-5">
+                        <h3 class="text-center mb-4">
+                            <i class="fas fa-heart text-danger me-2"></i>
+                            Support Our Cause
+                        </h3>
+                        
+                        <form id="donation-form">
+                            {% csrf_token %}
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Select Donation Amount *</label>
+                                <div class="row">
+                                    <div class="col-6 col-md-3 mb-3">
+                                        <div class="amount-option" data-amount="10">
+                                            <h5 class="mb-1">$10</h5>
+                                            <small class="text-muted">Basic</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3 mb-3">
+                                        <div class="amount-option" data-amount="25">
+                                            <h5 class="mb-1">$25</h5>
+                                            <small class="text-muted">Standard</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3 mb-3">
+                                        <div class="amount-option" data-amount="50">
+                                            <h5 class="mb-1">$50</h5>
+                                            <small class="text-muted">Premium</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3 mb-3">
+                                        <div class="amount-option" data-amount="100">
+                                            <h5 class="mb-1">$100</h5>
+                                            <small class="text-muted">Hero</small>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                                <div class="mt-3">
+                                    <label for="custom-amount" class="form-label">Or enter a custom amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="custom-amount" name="custom_amount" 
+                                               min="1" step="0.01" placeholder="Enter amount">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="message" class="form-label">Message (Optional)</label>
+                                <textarea class="form-control" id="message" name="message" rows="3" 
+                                          placeholder="Share why you're donating or leave a message..."></textarea>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Payment Information</label>
+                                <div id="card-element" class="form-control">
+                                </div>
+                                <div id="card-errors" class="text-danger mt-2" role="alert"></div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100" id="submit-button">
+                                <i class="fas fa-lock me-2"></i>
+                                <span id="button-text">Donate Securely</span>
+                                <div class="spinner-border spinner-border-sm ms-2 d-none" id="spinner" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                            
+                            <div class="text-center mt-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-shield-alt me-1"></i>
+                                    Your payment is secure and encrypted
+                                </small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+               
+                <div class="row mt-5">
+                    <div class="col-md-4 text-center mb-3">
+                        <i class="fas fa-shield-alt fa-2x text-primary mb-2"></i>
+                        <h5>Secure Payments</h5>
+                        <p class="text-white-50">256-bit SSL encryption</p>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <i class="fas fa-hand-holding-heart fa-2x text-primary mb-2"></i>
+                        <h5>100% Transparent</h5>
+                        <p class="text-white-50">See exactly where your money goes</p>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                        <h5>Community Impact</h5>
+                        <p class="text-white-50">Join thousands of donors</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    // Initialize Stripe
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const elements = stripe.elements();
+    
+    // Create card element
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#424770',
+                '::placeholder': {
+                    color: '#aab7c4',
+                },
+            },
+            invalid: {
+                color: '#9e2146',
+            },
+        },
+    });
+    
+    cardElement.mount('#card-element');
+    
+    // Handle amount selection
+    let selectedAmount = null;
+    
+    document.querySelectorAll('.amount-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            document.querySelectorAll('.amount-option').forEach(opt => opt.classList.remove('selected'));
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            // Set selected amount
+            selectedAmount = this.dataset.amount;
+            // Clear custom amount
+            document.getElementById('custom-amount').value = '';
+        });
+    });
+    
+    // Handle custom amount
+    document.getElementById('custom-amount').addEventListener('input', function() {
+        // Remove selected class from all options
+        document.querySelectorAll('.amount-option').forEach(opt => opt.classList.remove('selected'));
+        selectedAmount = this.value;
+    });
+    
+    // Handle form submission
+    const form = document.getElementById('donation-form');
+    const submitButton = document.getElementById('submit-button');
+    const buttonText = document.getElementById('button-text');
+    const spinner = document.getElementById('spinner');
+    
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        // Get form data
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+        const amount = selectedAmount || document.getElementById('custom-amount').value;
+        
+        // Validate amount
+        if (!amount || parseFloat(amount) <= 0) {
+            alert('Please select or enter a valid donation amount.');
+            return;
+        }
+        
+        // Show loading state
+        submitButton.disabled = true;
+        buttonText.textContent = 'Processing...';
+        spinner.classList.remove('d-none');
+        
+        try {
+            // Create payment intent
+            const response = await fetch('{% url "create_payment_intent" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    amount: amount,
+                    message: message
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            // Confirm payment
+            const { error, paymentIntent } = await stripe.confirmCardPayment(data.client_secret, {
+                payment_method: {
+                    card: cardElement,
+                    billing_details: {
+                        name: name,
+                        email: email,
+                    },
+                }
+            });
+            
+            if (error) {
+                throw new Error(error.message);
+            }
+            
+            // Payment successful - redirect to success page
+            window.location.href = `/success/${data.donation_id}/`;
+            
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('card-errors').textContent = error.message;
+            
+            // Reset button state
+            submitButton.disabled = false;
+            buttonText.textContent = 'Donate Securely';
+            spinner.classList.add('d-none');
+        }
+    });
+    
+    // Handle card errors
+    cardElement.addEventListener('change', function(event) {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+</script>
 {% endblock %}

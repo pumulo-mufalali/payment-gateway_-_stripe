@@ -28,8 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Stripe
+STRIPE_PUBLISHABLE_KEY=os.getenv.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY=os.getenv.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_WEBHOOK_SECRET=os.getenv.get('STRIPE_PUBLISHABLE_KEY')
 
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
