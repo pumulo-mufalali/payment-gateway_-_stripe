@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import environ
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,10 +29,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
 # Stripe
-STRIPE_PUBLISHABLE_KEY=os.getenv.get('STRIPE_PUBLISHABLE_KEY')
-STRIPE_SECRET_KEY=os.getenv.get('STRIPE_PUBLISHABLE_KEY')
-STRIPE_WEBHOOK_SECRET=os.getenv.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_PUBLISHABLE_KEY=os.environ.get('STRIPE_PUBLISHABLE_KEY', default='')
+STRIPE_SECRET_KEY=os.environ.get('STRIPE_SECRET_KEY', default='')
+STRIPE_WEBHOOK_SECRET=os.environ.get('STRIPE_WEBHOOK_SECRET', default='')
 
 
 INSTALLED_APPS = [
