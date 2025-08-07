@@ -16,6 +16,9 @@ A beautiful and modern donation application built with Django, Bootstrap, and St
 
 1. **Home Page** (`home.html`): Landing page with donation form
 2. **Success Page** (`success.html`): Confirmation page after successful donation
+|  Admin Dashboard  |
+|-------------------|
+| ![Patient](screenshots/stripe_screenshot.png) |
 3. **Cancel Page** (`cancel.html`): Page shown when donation is cancelled
 4. **Base Template** (`base.html`): Common layout and styling
 
